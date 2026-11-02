@@ -17,6 +17,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 	end,
 })
 
+
 -- Highlight the yanked text for 200ms
 local highlight_yank_group = vim.api.nvim_create_augroup("HighlightYank", {})
 vim.api.nvim_create_autocmd("TextYankPost", {
@@ -26,31 +27,6 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 		vim.hl.on_yank({
 			higroup = "IncSearch",
 			timeout = 200,
-		})
-	end,
-})
-
--- format on save using efm langserver and configured formatters
-local lsp_fmt_group = vim.api.nvim_create_augroup("FormatOnSaveGroup", { clear = true })
-
-vim.api.nvim_create_autocmd("BufWritePre", {
-	group = lsp_fmt_group,
-	callback = function()
-		-- Trim trailing whitespace safely
-		if vim.fn.exists(":MiniTrailspace") == 2 then
-			require("mini.trailspace").trim()
-		end
-
-		-- Check if efm is attached to the current buffer (bufnr = 0)
-		local clients = vim.lsp.get_clients({ bufnr = 0, name = "efm" })
-		if vim.tbl_isempty(clients) then
-			return
-		end
-
-		-- Must be async = false for BufWritePre to save formatted text
-		vim.lsp.buf.format({
-			name = "efm",
-			async = false,
 		})
 	end,
 })

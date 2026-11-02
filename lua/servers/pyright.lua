@@ -1,22 +1,29 @@
--- ================================================================================================
+-- ===================================================================
 -- TITLE : pyright (Python Language Server) LSP Setup
--- LINKS :
---   > github: https://github.com/microsoft/pyright
--- ================================================================================================
+-- ===================================================================
 
---- @param capabilities table LSP client capabilities (typically from nvim-cmp or similar)
---- @return nil This function doesn't return a value, it configures the LSP server
 return function(capabilities)
-	vim.lsp.config('pyright', {
+	vim.lsp.config("pyright", {
 		capabilities = capabilities,
+		filetypes = { "python" },
 		settings = {
-			pyright = {
-				disableOrganizeImports = false,
+			python = {
 				analysis = {
-					useLibraryCodeForTypes = true,
 					autoSearchPaths = true,
-					diagnosticMode = "workspace",
-					autoImportCompletions = true,
+					useLibraryCodeForTypes = true,
+					
+					-- PERFORMANCE FIX: Only analyze open files so Pyright doesn't freeze indexing large .venv paths
+					diagnosticMode = "openFilesOnly",
+					
+					-- Balanced type checking without excessive noise
+					typeCheckingMode = "basic", 
+					
+					-- VS Code-style Inlay Hints
+					inlayHints = {
+						variableTypes = true,
+						functionReturnTypes = true,
+						pytestParameters = true,
+					},
 				},
 			},
 		},
